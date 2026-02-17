@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="Finnhub.NET/Finnhub.NET.csproj" />
+  </Folder>
+</Solution>
