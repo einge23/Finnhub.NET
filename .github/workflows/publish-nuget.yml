@@ -3,6 +3,7 @@ name: Publish NuGet Package
 on:
   push:
     branches:
+      - main
       - master
     tags:
       - 'v*.*.*'
@@ -14,6 +15,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      PROJECT_DIR: Finnhub.NET
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,9 +28,11 @@ jobs:
 
       - name: Restore
         run: dotnet restore
+        working-directory: ${{ env.PROJECT_DIR }}
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
+        working-directory: ${{ env.PROJECT_DIR }}
 
       - name: Resolve package version
         shell: bash
@@ -35,7 +40,7 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF#refs/tags/v}"
           else
-            BASE_VERSION=$(grep -oP '<VersionPrefix>\K[^<]+' Finnhub.NET.csproj || true)
+            BASE_VERSION=$(grep -oP '<VersionPrefix>\K[^<]+' "${PROJECT_DIR}/Finnhub.NET.csproj" || true)
             if [[ -z "$BASE_VERSION" ]]; then
               BASE_VERSION="0.1.0"
             fi
@@ -45,8 +50,10 @@ jobs:
 
       - name: Pack
         run: dotnet pack --configuration Release --no-build --output ./artifacts -p:PackageVersion=${PACKAGE_VERSION}
+        working-directory: ${{ env.PROJECT_DIR }}
 
       - name: Publish to NuGet
         run: dotnet nuget push "./artifacts/*.nupkg" --source "https://api.nuget.org/v3/index.json" --api-key "${NUGET_API_KEY}" --skip-duplicate
+        working-directory: ${{ env.PROJECT_DIR }}
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
