@@ -9,7 +9,7 @@ public sealed class FinnhubOptions
     [Required]
     public string ApiKey { get; set; } = string.Empty;
 
-    public string BaseUrl { get; set; } = "https://finnhub.io/api/v1";
+    public string BaseUrl { get; set; } = "https://finnhub.io/api/v1/";
 
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
 }

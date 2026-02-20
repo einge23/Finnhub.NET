@@ -37,7 +37,7 @@ public sealed class FinnhubClient : IFinnhubClient
         IReadOnlyDictionary<string, string?>? queryParameters = null,
         CancellationToken cancellationToken = default)
     {
-        var pathAndQuery = QueryStringBuilder.Build(path, queryParameters);
+        var pathAndQuery = QueryStringBuilder.Build(NormalizePath(path), queryParameters);
         return _httpClientHelper.GetAsync<TResponse>(pathAndQuery, cancellationToken);
     }
 
@@ -47,7 +47,7 @@ public sealed class FinnhubClient : IFinnhubClient
         IReadOnlyDictionary<string, string?>? queryParameters = null,
         CancellationToken cancellationToken = default)
     {
-        var pathAndQuery = QueryStringBuilder.Build(path, queryParameters);
+        var pathAndQuery = QueryStringBuilder.Build(NormalizePath(path), queryParameters);
         return _httpClientHelper.PostAsync<TResponse>(pathAndQuery, content, cancellationToken);
     }
 
@@ -55,7 +55,7 @@ public sealed class FinnhubClient : IFinnhubClient
     {
         if (!string.IsNullOrWhiteSpace(options.BaseUrl))
         {
-            httpClient.BaseAddress = new Uri(options.BaseUrl, UriKind.Absolute);
+            httpClient.BaseAddress = new Uri(NormalizeBaseUrl(options.BaseUrl), UriKind.Absolute);
         }
 
         if (options.Timeout > TimeSpan.Zero)
@@ -248,5 +248,17 @@ public sealed class FinnhubClient : IFinnhubClient
         {
             throw new ArgumentException("At least one of 'symbol', 'isin', or 'cusip' must be provided.");
         }
+    }
+
+    private static string NormalizePath(string path)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        return path.TrimStart('/');
+    }
+
+    private static string NormalizeBaseUrl(string baseUrl)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(baseUrl);
+        return baseUrl.TrimEnd('/') + "/";
     }
 }

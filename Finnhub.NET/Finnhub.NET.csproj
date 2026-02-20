@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>Finnhub.NET.Client</PackageId>
-        <VersionPrefix>0.1.1</VersionPrefix>
+        <VersionPrefix>0.1.2</VersionPrefix>
         <Title>Finnhub .NET Client</Title>
         <Description>.NET client library for the Finnhub API.</Description>
         <Authors>Finnhub.NET Contributors</Authors>
