@@ -14,18 +14,18 @@ internal sealed class HttpClientHelper
         _serializerOptions = serializerOptions;
     }
 
-    public Task<T> GetAsync<T>(string pathAndQuery, CancellationToken cancellationToken = default)
+    public async Task<T> GetAsync<T>(string pathAndQuery, CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, pathAndQuery);
-        return SendAsync<T>(request, cancellationToken);
+        return await SendAsync<T>(request, cancellationToken).ConfigureAwait(false);
     }
 
-    public Task<T> PostAsync<T>(string pathAndQuery, HttpContent? content = null, CancellationToken cancellationToken = default)
+    public async Task<T> PostAsync<T>(string pathAndQuery, HttpContent? content = null, CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, pathAndQuery);
         request.Content = content;
 
-        return SendAsync<T>(request, cancellationToken);
+        return await SendAsync<T>(request, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<T> SendAsync<T>(HttpRequestMessage request, CancellationToken cancellationToken)
